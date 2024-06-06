@@ -8,7 +8,7 @@ const cors = require('@sanity/cors');
 // You can find the list of options here: https://www.sanity.io/docs/http-api
 const sanityApi = cors.create([
   {
-    origin: ['http://localhost:3000', 'http://localhost:3333'], // Add the new origin here
+    origin: ['http://localhost:3000', 'http://localhost:3333','https://lulu-sigma.vercel.app/'], // Add the new origin here
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     headers: ['Content-Type', 'Authorization'],
     credentials: true,
