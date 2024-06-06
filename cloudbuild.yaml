@@ -1,0 +1,8 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/lustore-423921/nextjs-app', '.']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/lustore-423921/nextjs-app']
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: ['run', 'deploy', 'nextjs-app', '--image', 'gcr.io/lustore-423921/nextjs-app', '--platform', 'managed', '--allow-unauthenticated']

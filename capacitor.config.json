@@ -1,0 +1,6 @@
+{
+  "appId": "com.example.app",
+  "appName": "myApp",
+  "webDir": "./.next",
+  "port": 8080
+}
