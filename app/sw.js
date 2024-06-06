@@ -1,5 +1,4 @@
-"use client";
-import { useEffect } from "react";
+"use client";import { useEffect } from "react";
 
 export default function Sw() {
   useEffect(() => {
@@ -11,7 +10,7 @@ export default function Sw() {
       window.OneSignal = window.OneSignal || [];
       window.OneSignal.push(function() {
         window.OneSignal.init({
-          appId: 'Y4ff98f18-90a0-42c2-93e2-dc531efff17e',
+          appId: '4ff98f18-90a0-42c2-93e2-dc531efff17e',
           allowLocalhostAsSecureOrigin: true,
           notifyButton: {
             enable: true,
