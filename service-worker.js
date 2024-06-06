@@ -4,7 +4,7 @@ import { NetworkOnly, NetworkFirst, CacheFirst, StaleWhileRevalidate } from 'wor
 import { registerRoute, setDefaultHandler, setCatchHandler } from 'workbox-routing';
 import { matchPrecache, precacheAndRoute, cleanupOutdatedCaches } from 'workbox-precaching';
 
-importScripts('https://cdn.onesignal.com/sdks/OneSignalSDKWorker.js');
+// importScripts('https://cdn.onesignal.com/sdks/OneSignalSDKWorker.js');
 
 skipWaiting();
 clientsClaim();
