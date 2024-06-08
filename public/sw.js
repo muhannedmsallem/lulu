@@ -1,3 +1,10 @@
+
+import { skipWaiting, clientsClaim } from 'workbox-core';
+import { ExpirationPlugin } from 'workbox-expiration';
+import { NetworkOnly, NetworkFirst, CacheFirst, StaleWhileRevalidate } from 'workbox-strategies';
+import { registerRoute, setDefaultHandler, setCatchHandler } from 'workbox-routing';
+import { matchPrecache, precacheAndRoute, cleanupOutdatedCaches } from 'workbox-precaching';
+
 importScripts('https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.5.0/firebase-messaging-compat.js');
 import { skipWaiting, clientsClaim } from 'workbox-core';
