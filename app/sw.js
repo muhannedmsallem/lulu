@@ -4,9 +4,10 @@ import { useEffect } from "react";
 export default function Sw() {
   useEffect(() => {
     console.log('useEffect called');
+
     if (typeof window !== "undefined") {
       console.log('Window is defined');
-      
+
       // Register service worker
       if ('serviceWorker' in navigator) {
         console.log('Service Worker is supported');
