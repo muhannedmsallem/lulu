@@ -1,22 +1,20 @@
-
-
+importScripts('https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/10.5.0/firebase-messaging-compat.js');
 import { skipWaiting, clientsClaim } from 'workbox-core';
 import { ExpirationPlugin } from 'workbox-expiration';
 import { NetworkOnly, NetworkFirst, CacheFirst, StaleWhileRevalidate } from 'workbox-strategies';
 import { registerRoute, setDefaultHandler, setCatchHandler } from 'workbox-routing';
 import { matchPrecache, precacheAndRoute, cleanupOutdatedCaches } from 'workbox-precaching';
-importScripts('https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/10.5.0/firebase-messaging-compat.js');
 
-// Your web app's Firebase configuration
+// Firebase configuration
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID",
-  measurementId: "YOUR_MEASUREMENT_ID",
+  apiKey: "AIzaSyCaodAV0N9pB_wyRrktT9ot5duXTjy1NmI",
+  authDomain: "lustore-88089.firebaseapp.com",
+  projectId: "lustore-88089",
+  storageBucket: "lustore-88089.appspot.com",
+  messagingSenderId: "1004325553341",
+  appId: "1:1004325553341:web:3bd5700d7ee1154c8863d4",
+  measurementId: "G-R2R2WP2QXG"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -24,25 +22,14 @@ firebase.initializeApp(firebaseConfig);
 class CustomPushEvent extends Event {
     constructor(data) {
         super('push');
-
         Object.assign(this, data);
         this.custom = true;
     }
 }
 
-/*
- * Overrides push notification data, to avoid having 'notification' key and firebase blocking
- * the message handler from being called
- */
 self.addEventListener('push', (e) => {
-    // Skip if event is our own custom event
     if (e.custom) return;
-
-    // Kep old event data to override
     const oldData = e.data;
-
-    // Create a new event to dispatch, pull values from notification key and put it in data key,
-    // and then remove notification key
     const newEvent = new CustomPushEvent({
         data: {
             ehheh: oldData.json(),
@@ -58,23 +45,17 @@ self.addEventListener('push', (e) => {
         },
         waitUntil: e.waitUntil.bind(e),
     });
-
-    // Stop event propagation
     e.stopImmediatePropagation();
-
-    // Dispatch the new wrapped event
     dispatchEvent(newEvent);
 });
 
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
-    // console.log('[firebase-messaging-sw.js] Received background message ', payload);
-
     const { title, body, image, icon, ...restPayload } = payload.data;
     const notificationOptions = {
         body,
-        icon: image || '/icons/firebase-logo.png', // path to your "fallback" firebase notification logo
+        icon: image || '/icons/firebase-logo.png',
         data: restPayload,
     };
     return self.registration.showNotification(title, notificationOptions);
@@ -84,15 +65,13 @@ self.addEventListener('notificationclick', (event) => {
     if (event?.notification?.data && event?.notification?.data?.link) {
         self.clients.openWindow(event.notification.data.link);
     }
-
-    // close notification after click
     event.notification.close();
 });
 
 skipWaiting();
 clientsClaim();
 
-const WB_MANIFEST = self.__WB_MANIFEST;
+const WB_MANIFEST = self.__WB_MANIFEST || [];
 WB_MANIFEST.push({
   url: '/fallback',
   revision: '1234567890',
@@ -104,10 +83,9 @@ cleanupOutdatedCaches();
 const CACHE_NAME = 'my-cache-v1';
 const urlsToCache = [
   '/',
-  '/_next/static/css/app/layout.css', // Adjust based on actual paths
-  '/_next/static/chunks/webpack.js', // Adjust based on actual paths
-  '/_next/static/chunks/app/main-app.js', // Adjust based on actual paths
-  // Add other assets you want to cache initially
+  '/_next/static/css/app/layout.css',
+  '/_next/static/chunks/webpack.js',
+  '/_next/static/chunks/app/main-app.js',
 ];
 
 self.addEventListener('install', (event) => {
@@ -133,19 +111,13 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
-    })
-  );
-});
-
-// Fetch event
-self.addEventListener('fetch', (event) => {
   console.log('Fetching:', event.request.url);
   event.respondWith(
     caches.match(event.request).then((response) => {
       return response || fetch(event.request);
+    }).catch((error) => {
+      console.error('Fetch failed:', error);
+      return fetch(event.request);
     })
   );
 });
@@ -174,7 +146,7 @@ registerRoute(
     plugins: [
       new ExpirationPlugin({
         maxEntries: 4,
-        maxAgeSeconds: 31536e3,
+        maxAgeSeconds: 31536000,
         purgeOnQuotaError: true,
       }),
     ],
