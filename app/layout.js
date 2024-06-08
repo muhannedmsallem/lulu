@@ -18,8 +18,8 @@ export default function RootLayout({ children, loading }) {
         <link rel="manifest" href="/manifest.json" />
         <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
           {/* <script src="../public/onesignal.js" async=""></script> */}
-          <script src="../notif.js" ></script>
-      </head>
+          <script src="https://cdn.pushalert.co/integrate_4a4ac5681572480c7f47f59e05e325d0.js" async=""></script>
+          </head>
       <body className={inter.className}>
         <Sw />
         {loading ? <Loading /> : children}
