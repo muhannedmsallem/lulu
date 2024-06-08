@@ -1,6 +1,5 @@
 importScripts('https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.5.0/firebase-messaging-compat.js');
-importScripts('https://cdn.pushalert.co/integrate_4ff98f18-90a0-42c2-93e2-dc531efff17e.js');
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.1.5/workbox-sw.js');
 
 // Initialize Firebase
