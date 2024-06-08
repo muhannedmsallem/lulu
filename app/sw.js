@@ -21,6 +21,7 @@ export default function Sw() {
     } else {
       console.log('Window is not defined');
     }
+    
   }, []);
 
   return null;

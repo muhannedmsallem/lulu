@@ -15,10 +15,10 @@ export default function RootLayout({ children, loading }) {
   return (
     <html lang="en" data-theme="fantasy" dir="rtl">
       <head>
-        
         <link rel="manifest" href="/manifest.json" />
         <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
-
+          {/* <script src="../public/onesignal.js" async=""></script> */}
+          <script src="../notif.js" ></script>
       </head>
       <body className={inter.className}>
         <Sw />
