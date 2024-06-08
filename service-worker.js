@@ -1,4 +1,3 @@
-// importScripts('/OneSignalSDKWorker.js'); // Import OneSignal SDK worker script
 
 
 import { skipWaiting, clientsClaim } from 'workbox-core';
@@ -7,6 +6,7 @@ import { NetworkOnly, NetworkFirst, CacheFirst, StaleWhileRevalidate } from 'wor
 import { registerRoute, setDefaultHandler, setCatchHandler } from 'workbox-routing';
 import { matchPrecache, precacheAndRoute, cleanupOutdatedCaches } from 'workbox-precaching';
 
+importScripts("https://cdn.pushalert.co/sw-71170.js");
 
 skipWaiting();
 clientsClaim();
