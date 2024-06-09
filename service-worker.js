@@ -85,15 +85,12 @@ if (workbox) {
     })
   );
 
-  const FALLBACK_HTML_URL = '/offline.html';
   workbox.routing.setCatchHandler(async ({ event }) => {
-    if (event.request.destination === 'document') {
-      return workbox.precaching.matchPrecache(FALLBACK_HTML_URL);
-    }
+
     return Response.error();
   });
 
-  workbox.precaching.precacheAndRoute([{ url: FALLBACK_HTML_URL, revision: null }]);
+  // workbox.precaching.precacheAndRoute([{ url: FALLBACK_HTML_URL, revision: null }]);
 
 } else {
   console.log(`Workbox didn't load`);
