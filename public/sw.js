@@ -1,50 +1,24 @@
-importScripts('https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/10.5.0/firebase-messaging-compat.js');
+
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.1.5/workbox-sw.js');
 
-if (firebase.apps.length === 0) {
-  firebase.initializeApp({
-  apiKey: "AIzaSyCaodAV0N9pB_wyRrktT9ot5duXTjy1NmI",
-  authDomain: "lustore-88089.firebaseapp.com",
-  projectId: "lustore-88089",
-  storageBucket: "lustore-88089.appspot.com",
-  messagingSenderId: "1004325553341",
-  appId: "1:1004325553341:web:3bd5700d7ee1154c8863d4",
-  measurementId: "G-R2R2WP2QXG"
-  });
+// Check if Workbox is loaded
+if (typeof workbox !== 'undefined') {
+  console.log('Workbox is loaded');
+  // Your Workbox code here
 } else {
-  firebase.app(); // if already initialized, use that one
+  console.log('Workbox is not loaded');
 }
 
-const messaging = firebase.messaging();
-
-messaging.onBackgroundMessage((payload) => {
-  const { title, body, image, icon, ...restPayload } = payload.data;
-  const notificationOptions = {
-    body,
-    icon: image || '/icons/firebase-logo.png',
-    data: restPayload,
-  };
-  return self.registration.showNotification(title, notificationOptions);
-});
-
-self.addEventListener('notificationclick', (event) => {
-  if (event?.notification?.data && event?.notification?.data?.link) {
-    self.clients.openWindow(event.notification.data.link);
-  }
-  event.notification.close();
-});
-
 if (workbox) {
-  workbox.core.skipWaiting();
   workbox.core.clientsClaim();
 
   const manifest = self.__WB_MANIFEST;
   if (manifest && Array.isArray(manifest)) {
     workbox.precaching.precacheAndRoute(manifest);
   } else {
-    console.error('No precache manifest found');
+    console.warn('No precache manifest found. precacheAndRoute() may not be effective if the service worker has already finished installing and activating.');
   }
+
 
   workbox.routing.registerRoute(
     ({ request }) => request.destination === 'document',
@@ -85,15 +59,12 @@ if (workbox) {
     })
   );
 
-  const FALLBACK_HTML_URL = '/';
   workbox.routing.setCatchHandler(async ({ event }) => {
-    if (event.request.destination === 'document') {
-      return workbox.precaching.matchPrecache(FALLBACK_HTML_URL);
-    }
+
     return Response.error();
   });
 
-  workbox.precaching.precacheAndRoute([{ url: FALLBACK_HTML_URL, revision: null }]);
+  // workbox.precaching.precacheAndRoute([{ url: FALLBACK_HTML_URL, revision: null }]);
 
 } else {
   console.log(`Workbox didn't load`);

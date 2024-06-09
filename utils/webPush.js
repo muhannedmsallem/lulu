@@ -9,13 +9,14 @@ const firebaseCloudMessaging = {
   init: async function() {
     if (!firebase.apps.length) {
       firebase.initializeApp({
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_AUTH_DOMAIN",
-        projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_STORAGE_BUCKET",
-        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-        appId: "YOUR_APP_ID",
-        measurementId: "YOUR_MEASUREMENT_ID"
+
+        apiKey: "AIzaSyCaodAV0N9pB_wyRrktT9ot5duXTjy1NmI",
+        authDomain: "lustore-88089.firebaseapp.com",
+        projectId: "lustore-88089",
+        storageBucket: "lustore-88089.appspot.com",
+        messagingSenderId: "1004325553341",
+        appId: "1:1004325553341:web:3bd5700d7ee1154c8863d4",
+        measurementId: "G-R2R2WP2QXG"
       });
 
       try {
@@ -28,7 +29,7 @@ const firebaseCloudMessaging = {
         const status = await Notification.requestPermission();
         if (status && status === 'granted') {
           const fcm_token = await messaging.getToken({
-            vapidKey: 'YOUR_VAPID_KEY'
+            vapidKey: 'YBJwbPEF5EWVF0P5O3bqyHf5ZBVmVHMxy8YtgP4M1KTUUJSeJ0eX94HRpRromqli3RXZFfeub9ZLjskIbjqfz7B8'
           });
           if (fcm_token) {
             localforage.setItem('fcm_token', fcm_token);
