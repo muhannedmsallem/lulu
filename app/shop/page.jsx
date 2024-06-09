@@ -14,7 +14,6 @@ const Products = () => {
   const [page, setPage] = useState(1);
 
   const loadMoreRef = useRef();
-
   const LIMIT = 20;
 
   useEffect(() => {
@@ -114,9 +113,11 @@ const Products = () => {
     cursor: 'pointer',
     transition: 'background-color 0.3s ease, border-color 0.3s ease',
   };
+  
   if (!products) {
-    return <div className="flex items-center justify-center h-screen">تحميل...</div>;
+    return <div className="flex items-center justify-center h-screen">Loading...</div>;
   }
+
   return (
     <div className="container mx-auto p-4">
       {isLoading ? (
@@ -181,7 +182,7 @@ const Products = () => {
                 })}
               </>
             ) : (
-              <h1 className="text-black text-center">لا توجد منتجات</h1>
+              <h1 className="text-black text-center">No products found</h1>
             )}
           </div>
           {isFetchingMore && (

@@ -7,6 +7,7 @@ import category from './category'
 import plotSummary from './plotSummary'
 import plotSummaries from './plotSummaries'
 import order from './order';
+import user from './user';
 
 export const schemaTypes = [
   // Document types
@@ -14,6 +15,7 @@ export const schemaTypes = [
   category,
   subcategory,
   order,
+  user
   // Other types
 
 ]

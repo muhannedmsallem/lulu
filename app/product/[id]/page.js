@@ -1,12 +1,12 @@
-'use client'; // هذا التعليمة تعليم Next.js أن هذا هو مكون عميل مبدع
+'use client'; // This tells Next.js that this is a client component
 
 import { useState, useEffect } from 'react';
 import { client } from "../../../sanity";
 import AddToBag from "../../components/AddToBag";
 import ImageGallery from "../../components/ImageGallery";
-import { Star, Truck,ArrowLeft  } from "lucide-react";
+import { Star, Truck, ArrowLeft } from "lucide-react";
 
-async function getProduct(id) {
+async function fetchProduct(id) {
   const query = `*[_type == "product" && _id == $id][0] {
         _id,
         images,
@@ -21,13 +21,33 @@ async function getProduct(id) {
   return data;
 }
 
+function cacheProductData(id, data) {
+  localStorage.setItem(`product-${id}`, JSON.stringify(data));
+}
+
+function getCachedProductData(id) {
+  const cachedData = localStorage.getItem(`product-${id}`);
+  return cachedData ? JSON.parse(cachedData) : null;
+}
+
 export default function ProductPage({ params }) {
   const [product, setProduct] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
 
-  // تحميل بيانات المنتج عند تشغيل المكون
   useEffect(() => {
-    getProduct(params.id).then(setProduct);
+    const fetchData = async () => {
+      const cachedData = getCachedProductData(params.id);
+
+      if (cachedData) {
+        setProduct(cachedData);
+      } else {
+        const data = await fetchProduct(params.id);
+        setProduct(data);
+        cacheProductData(params.id, data);
+      }
+    };
+
+    fetchData();
   }, [params.id]);
 
   const handleSizeChange = (size) => {
@@ -35,7 +55,7 @@ export default function ProductPage({ params }) {
   };
 
   if (!product) {
-    return <div className="flex items-center justify-center h-screen">تحميل...</div>;
+    return <div className="flex items-center justify-center h-screen">Loading...</div>;
   }
 
   return (
@@ -54,18 +74,13 @@ export default function ProductPage({ params }) {
               </h2>
             </div>
 
-
             <div className="mb-4 text-center flex items-center justify-center">
               <div className="flex items-center justify-center gap-2">
                 <span className="text-xl font-bold text-gray-800 md:text-2xl">
-                    دينار {product.price}
+                  دينار {product.price}
                 </span>
               </div>
-
-      
             </div>
-
-    
 
             <div className="mb-6 text-center">
               <span className="block text-gray-700 mb-2">اختر المقاس:</span>
@@ -84,7 +99,7 @@ export default function ProductPage({ params }) {
             </div>
 
             <div className="flex gap-2.5 justify-center">
-              <AddToBag product={product}   size={selectedSize} />
+              <AddToBag product={product} size={selectedSize} />
             </div>
             <p className="mt-12 text-base text-gray-500 tracking-wide text-center">
               {product.description}
@@ -95,4 +110,3 @@ export default function ProductPage({ params }) {
     </div>
   );
 }
-

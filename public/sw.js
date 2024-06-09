@@ -19,7 +19,6 @@ if (workbox) {
     console.warn('No precache manifest found. precacheAndRoute() may not be effective if the service worker has already finished installing and activating.');
   }
 
-
   workbox.routing.registerRoute(
     ({ request }) => request.destination === 'document',
     new workbox.strategies.NetworkFirst()
@@ -46,19 +45,17 @@ if (workbox) {
   );
 
   workbox.routing.registerRoute(
-    ({ url }) => url.pathname.startsWith('/api'),
-    new workbox.strategies.NetworkFirst({
-      cacheName: 'api-cache',
-      networkTimeoutSeconds: 10,
+    ({ url }) => url.origin === 'https://1pi0qth2.api.sanity.io', // Replace with your Sanity API base URL
+    new NetworkFirst({
+      cacheName: 'sanity-api-cache',
       plugins: [
-        new workbox.expiration.ExpirationPlugin({
-          maxEntries: 50,
-          maxAgeSeconds: 5 * 60, // 5 minutes
+        new ExpirationPlugin({
+          maxEntries: 50, // Max number of entries to cache
+          maxAgeSeconds: 5 * 60, // Cache duration in seconds (5 minutes)
         }),
       ],
     })
   );
-
   workbox.routing.setCatchHandler(async ({ event }) => {
 
     return Response.error();
@@ -69,3 +66,12 @@ if (workbox) {
 } else {
   console.log(`Workbox didn't load`);
 }
+
+document.addEventListener('deviceready', function () {
+  // Clear the cache when the device is ready
+  median.webview.clearCache(function () {
+      console.log('Cache cleared successfully');
+  }, function (error) {
+      console.error('Error clearing cache:', error);
+  });
+}, false);
