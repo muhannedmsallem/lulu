@@ -18,6 +18,8 @@ export const metadata = {
     <html lang="en" data-theme="fantasy" dir="rtl">
       <head>
         <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#FFFFFF" />
+        
         <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
           {/* <script src="../public/onesignal.js" async=""></script> */}
           </head>
