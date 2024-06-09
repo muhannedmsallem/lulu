@@ -85,7 +85,7 @@ if (workbox) {
     })
   );
 
-  const FALLBACK_HTML_URL = '/offline.html';
+  const FALLBACK_HTML_URL = '/';
   workbox.routing.setCatchHandler(async ({ event }) => {
     if (event.request.destination === 'document') {
       return workbox.precaching.matchPrecache(FALLBACK_HTML_URL);
