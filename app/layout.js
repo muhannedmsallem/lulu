@@ -6,7 +6,7 @@ import Loading from "./components/Loading ";
 const inter = Cairo({ subsets: ["latin"] });
 import 'line-awesome/dist/line-awesome/css/line-awesome.min.css';
 import Sw from "./sw";
-import firebase from 'firebase/app';
+import firebase from 'firebase/compat/app'; // Firebase App (the core Firebase SDK)
 import 'firebase/messaging'; // If you're using Firebase Messaging
 
 export const metadata = {
