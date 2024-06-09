@@ -1,6 +1,77 @@
 
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.1.5/workbox-sw.js');
 
+
+const CACHE_NAME = 'my-cache-v1';
+const API_CACHE_NAME = 'api-cache-v1';
+
+const urlsToCache = [
+  '/',
+  '/index.html',
+  '/styles.css',
+  '/script.js',
+  '/shop',
+  '/product/*',
+  '/cart'
+
+  // Add other URLs you want to precache
+];
+// Install Service Worker and cache static assets
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      console.log('Opened cache');
+      return cache.addAll(urlsToCache);
+    })
+  );
+});
+
+// Cache and return requests
+self.addEventListener('fetch', (event) => {
+  if (event.request.url.includes('/api/')) {
+    event.respondWith(
+      caches.open(API_CACHE_NAME).then((cache) => {
+        return fetch(event.request)
+          .then((response) => {
+            if (!response || response.status !== 200 || response.type !== 'basic') {
+              return response;
+            }
+            const responseToCache = response.clone();
+            cache.put(event.request, responseToCache);
+            return response;
+          })
+          .catch(() => {
+            return caches.match(event.request).then((response) => {
+              return response || new Response('No internet connection and no cached data available');
+            });
+          });
+      })
+    );
+  } else {
+    event.respondWith(
+      caches.match(event.request).then((cachedResponse) => {
+        return cachedResponse || fetch(event.request);
+      })
+    );
+  }
+});
+
+// Activate Service Worker and remove old caches
+self.addEventListener('activate', (event) => {
+  const cacheWhitelist = [CACHE_NAME, API_CACHE_NAME];
+  event.waitUntil(
+    caches.keys().then((cacheNames) =>
+      Promise.all(
+        cacheNames.map((cacheName) => {
+          if (!cacheWhitelist.includes(cacheName)) {
+            return caches.delete(cacheName);
+          }
+        })
+      )
+    )
+  );
+});
+
 // Check if Workbox is loaded
 if (typeof workbox !== 'undefined') {
   console.log('Workbox is loaded');
@@ -46,16 +117,23 @@ if (workbox) {
 
   workbox.routing.registerRoute(
     ({ url }) => url.origin === 'https://1pi0qth2.api.sanity.io', // Replace with your Sanity API base URL
-    new NetworkFirst({
+    new workbox.strategies.NetworkFirst({
       cacheName: 'sanity-api-cache',
       plugins: [
-        new ExpirationPlugin({
+        new workbox.expiration.ExpirationPlugin({
           maxEntries: 50, // Max number of entries to cache
           maxAgeSeconds: 5 * 60, // Cache duration in seconds (5 minutes)
         }),
       ],
     })
   );
+  self.addEventListener('fetch', (event) => {
+    event.respondWith(
+      caches.match(event.request).then((response) => {
+        return response || fetch(event.request);
+      })
+    );
+  });
   workbox.routing.setCatchHandler(async ({ event }) => {
 
     return Response.error();
