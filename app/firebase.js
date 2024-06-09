@@ -33,6 +33,8 @@ function Firebase() {
         // Handle incoming messages when the app is in the foreground
         messaging.onMessage((payload) => {
           console.log('Foreground message:', payload);
+          // Display notification when a message is received
+          showNotification(payload);
         });
       } catch (error) {
         console.error('Firebase initialization error:', error);
@@ -54,6 +56,19 @@ function Firebase() {
       console.log('Service Worker is not supported');
     }
   }, []);
+
+  // Function to display notification
+  function showNotification(payload) {
+    let notificationOptions = {
+      body: payload.notification.body,
+      icon: payload.notification.icon
+    }
+    let notif = new Notification(payload.notification.title, notificationOptions);
+  
+    notif.onclick = () => {
+      console.log('Notification clicked');
+    }
+  }
 
   return <div>Woah! wait let me get it right</div>;
 }
