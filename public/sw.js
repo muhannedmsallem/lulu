@@ -6,7 +6,8 @@ const API_CACHE_NAME = 'api-cache-v1';
 const urlsToCache = [
   '/',
   '/shop',
-  '/cart'
+  '/cart',
+  // Add more specific URLs if needed
 ];
 
 // Install Service Worker and cache static assets
@@ -14,15 +15,32 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       console.log('Opened cache');
-      return cache.addAll(urlsToCache).catch((error) => {
-        console.error('Failed to cache URLs:', error);
-      });
+      return cache.addAll(urlsToCache);
     })
   );
+  self.skipWaiting();
 });
 
 // Cache and return requests
 self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url);
+
+  if (url.pathname.startsWith('/product/')) {
+    event.respondWith(
+      caches.open(CACHE_NAME).then((cache) => {
+        return cache.match(event.request).then((response) => {
+          return response || fetch(event.request).then((networkResponse) => {
+            if (networkResponse && networkResponse.status === 200) {
+              cache.put(event.request, networkResponse.clone());
+            }
+            return networkResponse;
+          });
+        });
+      })
+    );
+    return;
+  }
+
   if (event.request.url.includes('/api/')) {
     event.respondWith(
       caches.open(API_CACHE_NAME).then((cache) => {
@@ -37,7 +55,10 @@ self.addEventListener('fetch', (event) => {
           })
           .catch(() => {
             return caches.match(event.request).then((response) => {
-              return response || new Response('No internet connection and no cached data available');
+              return response || new Response('No internet connection and no cached data available', {
+                status: 503,
+                statusText: 'Service Unavailable'
+              });
             });
           });
       })
@@ -45,22 +66,17 @@ self.addEventListener('fetch', (event) => {
   } else {
     event.respondWith(
       caches.match(event.request).then((cachedResponse) => {
-        if (cachedResponse) {
-          return cachedResponse;
-        }
-        return fetch(event.request).then((response) => {
+        return cachedResponse || fetch(event.request).then((response) => {
           if (!response || response.status !== 200 || response.type !== 'basic') {
             return response;
           }
-          const responseToCache = response.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
+          return caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, response.clone());
+            return response;
           });
-          return response;
+        }).catch(() => {
+          return caches.match('/offline.html'); // Provide a fallback offline page if available
         });
-      }).catch((error) => {
-        console.error('Fetch failed:', error);
-        return new Response('No internet connection and no cached data available');
       })
     );
   }
@@ -80,6 +96,7 @@ self.addEventListener('activate', (event) => {
       )
     )
   );
+  self.clients.claim();
 });
 
 // Check if Workbox is loaded
@@ -137,25 +154,29 @@ if (workbox) {
       ],
     })
   );
+
+  self.addEventListener('fetch', (event) => {
+    event.respondWith(
+      caches.match(event.request).then((response) => {
+        return response || fetch(event.request);
+      })
+    );
+  });
+
+  workbox.routing.setCatchHandler(async ({ event }) => {
+    return Response.error();
+  });
+
 } else {
   console.log(`Workbox didn't load`);
 }
 
-// Push Notifications
-self.addEventListener('push', function(event) {
-  const data = event.data.json();
-  const options = {
-    body: data.body,
-    icon: data.icon,
-    badge: data.badge,
-    data: {
-      url: data.url
-    }
-  };
-  event.waitUntil(self.registration.showNotification(data.title, options));
-});
+self.addEventListener('deviceready', function () {
+  // Clear the cache when the device is ready
+  median.webview.clearCache(function () {
+      console.log('Cache cleared successfully');
+  }, function (error) {
+      console.error('Error clearing cache:', error);
+  });
+}, false);
 
-self.addEventListener('notificationclick', function(event) {
-  event.notification.close();
-  event.waitUntil(clients.openWindow(event.notification.data.url));
-});
