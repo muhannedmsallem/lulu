@@ -1,6 +1,4 @@
-
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.1.5/workbox-sw.js');
-
 
 const CACHE_NAME = 'my-cache-v1';
 const API_CACHE_NAME = 'api-cache-v1';
@@ -8,17 +6,17 @@ const API_CACHE_NAME = 'api-cache-v1';
 const urlsToCache = [
   '/',
   '/shop',
-
   '/cart'
-
-  // Add other URLs you want to precache
 ];
+
 // Install Service Worker and cache static assets
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       console.log('Opened cache');
-      return cache.addAll(urlsToCache);
+      return cache.addAll(urlsToCache).catch((error) => {
+        console.error('Failed to cache URLs:', error);
+      });
     })
   );
 });
@@ -47,7 +45,22 @@ self.addEventListener('fetch', (event) => {
   } else {
     event.respondWith(
       caches.match(event.request).then((cachedResponse) => {
-        return cachedResponse || fetch(event.request);
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+        return fetch(event.request).then((response) => {
+          if (!response || response.status !== 200 || response.type !== 'basic') {
+            return response;
+          }
+          const responseToCache = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+          return response;
+        });
+      }).catch((error) => {
+        console.error('Fetch failed:', error);
+        return new Response('No internet connection and no cached data available');
       })
     );
   }
@@ -124,33 +137,11 @@ if (workbox) {
       ],
     })
   );
-  self.addEventListener('fetch', (event) => {
-    event.respondWith(
-      caches.match(event.request).then((response) => {
-        return response || fetch(event.request);
-      })
-    );
-  });
-  workbox.routing.setCatchHandler(async ({ event }) => {
-
-    return Response.error();
-  });
-
-  // workbox.precaching.precacheAndRoute([{ url: FALLBACK_HTML_URL, revision: null }]);
-
 } else {
   console.log(`Workbox didn't load`);
 }
 
-self.addEventListener('deviceready', function () {
-  // Clear the cache when the device is ready
-  median.webview.clearCache(function () {
-      console.log('Cache cleared successfully');
-  }, function (error) {
-      console.error('Error clearing cache:', error);
-  });
-}, false);
-
+// Push Notifications
 self.addEventListener('push', function(event) {
   const data = event.data.json();
   const options = {

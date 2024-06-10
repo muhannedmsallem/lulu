@@ -24,7 +24,7 @@ export const metadata = {
         <meta name="theme-color" content="#FFFFFF" />
 
         <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
-          <script src="../public/OneSignalSDKWorker.js" async=""></script>
+          <script rel="OneSignal" href="/OneSignalSDKWorker.js" ></script>
           </head>
       <body className={inter.className}>
         <Sw />
