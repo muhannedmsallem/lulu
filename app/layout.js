@@ -23,12 +23,10 @@ export const metadata = {
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#FFFFFF" />
 
-        <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
           <script rel="OneSignal" href="/OneSignalSDKWorker.js" ></script>
           </head>
       <body className={inter.className}>
         <Sw />
-        <SubscribeButton />
 
         {loading ? <Loading /> : children}
         <div className="w-full h-20 bg-white"></div>

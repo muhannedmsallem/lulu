@@ -17,7 +17,6 @@ export default function Sw() {
           .catch(error => {
             console.error('Service Worker registration failed:', error);
           });
-          navigator.serviceWorker.register('/OneSignalSDKWorker.js')
 
       } else {
         console.log('Service Worker is not supported');
