@@ -171,12 +171,4 @@ if (workbox) {
   console.log(`Workbox didn't load`);
 }
 
-self.addEventListener('deviceready', function () {
-  // Clear the cache when the device is ready
-  median.webview.clearCache(function () {
-      console.log('Cache cleared successfully');
-  }, function (error) {
-      console.error('Error clearing cache:', error);
-  });
-}, false);
 

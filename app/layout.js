@@ -23,7 +23,6 @@ export const metadata = {
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#FFFFFF" />
 
-          <script rel="OneSignal" href="/OneSignalSDKWorker.js" ></script>
           </head>
       <body className={inter.className}>
         <Sw />
