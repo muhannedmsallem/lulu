@@ -15,6 +15,17 @@ const SubscribeButton = () => {
         window.OneSignal.init({
           appId: "4ff98f18-90a0-42c2-93e2-dc531efff17e", // Replace with your actual app ID
           allowLocalhostAsSecureOrigin: true,
+          promptOptions: {
+            slidedown: {
+              enabled: true, // Ensure the slidedown prompt is enabled
+              autoPrompt: true,
+              text: {
+                actionMessage: "We'd like to show you notifications for the latest news and updates.",
+                acceptButton: "ALLOW",
+                cancelButton: "NO THANKS"
+              }
+            }
+          }
         });
         window.OneSignal.on('subscriptionChange', handleSubscriptionChange);
         setIsOneSignalInitialized(true);
@@ -47,7 +58,6 @@ const SubscribeButton = () => {
   const handleSubscribe = () => {
     if (isOneSignalInitialized) {
       window.OneSignal.push(() => {
-        console.log('Before showing slidedown prompt');
         window.OneSignal.showSlidedownPrompt().then(() => {
           window.OneSignal.isPushNotificationsEnabled((isEnabled) => {
             if (isEnabled) {
