@@ -6,12 +6,16 @@ const SubscribeButton = () => {
 
   useEffect(() => {
     const handleSubscriptionChange = (isSubscribed) => {
-      console.log('The user\'s subscription state is now:', isSubscribed);
+      console.log("The user's subscription state is now:", isSubscribed);
     };
 
     const initializeOneSignal = () => {
       window.OneSignal = window.OneSignal || [];
-      window.OneSignal.push(function () {
+      window.OneSignal.push(() => {
+        window.OneSignal.init({
+          appId: "4ff98f18-90a0-42c2-93e2-dc531efff17e", // Replace with your actual app ID
+          allowLocalhostAsSecureOrigin: true,
+        });
         window.OneSignal.on('subscriptionChange', handleSubscriptionChange);
         setIsOneSignalInitialized(true);
         console.log('OneSignal is initialized:', window.OneSignal);
@@ -33,7 +37,7 @@ const SubscribeButton = () => {
 
     return () => {
       if (typeof window !== 'undefined' && window.OneSignal) {
-        window.OneSignal.push(function () {
+        window.OneSignal.push(() => {
           window.OneSignal.off('subscriptionChange', handleSubscriptionChange);
         });
       }
@@ -42,8 +46,17 @@ const SubscribeButton = () => {
 
   const handleSubscribe = () => {
     if (isOneSignalInitialized) {
-      window.OneSignal.push(function () {
-        window.OneSignal.showSlidedownPrompt();
+      window.OneSignal.push(() => {
+        console.log('Before showing slidedown prompt');
+        window.OneSignal.showSlidedownPrompt().then(() => {
+          window.OneSignal.isPushNotificationsEnabled((isEnabled) => {
+            if (isEnabled) {
+              console.log('Push notifications are enabled!');
+            } else {
+              console.log('Push notifications are not enabled yet.');
+            }
+          });
+        });
         console.log('Slidedown prompt shown');
       });
     } else {
