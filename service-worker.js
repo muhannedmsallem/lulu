@@ -145,7 +145,7 @@ if (workbox) {
   console.log(`Workbox didn't load`);
 }
 
-document.addEventListener('deviceready', function () {
+self.addEventListener('deviceready', function () {
   // Clear the cache when the device is ready
   median.webview.clearCache(function () {
       console.log('Cache cleared successfully');
@@ -153,3 +153,21 @@ document.addEventListener('deviceready', function () {
       console.error('Error clearing cache:', error);
   });
 }, false);
+
+self.addEventListener('push', function(event) {
+  const data = event.data.json();
+  const options = {
+    body: data.body,
+    icon: data.icon,
+    badge: data.badge,
+    data: {
+      url: data.url
+    }
+  };
+  event.waitUntil(self.registration.showNotification(data.title, options));
+});
+
+self.addEventListener('notificationclick', function(event) {
+  event.notification.close();
+  event.waitUntil(clients.openWindow(event.notification.data.url));
+});

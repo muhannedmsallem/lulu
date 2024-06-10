@@ -13,8 +13,22 @@ export default function Home() {
     const fetchInitialData = async () => {
       try {
         const [productData, categoryData] = await Promise.all([
-          fetchWithCache('/api/products'),
-          fetchWithCache('/api/categories')
+          client.fetch(
+            `*[_type == "product"] | order(_createdAt desc) [0...3] {
+              _id,
+              title,
+              price,
+              images,
+              "category": category->title,
+              "subcategory": subcategory->title
+            }`
+          ),
+          client.fetch(
+            `*[_type == "category"]{
+              _id,
+              title
+            }`
+          ),
         ]);
         setProducts(productData);
         setCategories(categoryData);
@@ -27,23 +41,6 @@ export default function Home() {
 
     fetchInitialData();
   }, []);
-
-  const fetchWithCache = async (url) => {
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error('Fetch failed, trying to get data from cache:', error);
-      const cache = await caches.open('api-cache-v1');
-      const cachedResponse = await cache.match(url);
-      if (cachedResponse) {
-        return await cachedResponse.json();
-      } else {
-        throw new Error('No data found in cache');
-      }
-    }
-  };
 
   return (
     <div className="overflow-y-scroll h-full">

@@ -6,6 +6,8 @@ import Loading from "./components/Loading ";
 const inter = Cairo({ subsets: ["latin"] });
 import 'line-awesome/dist/line-awesome/css/line-awesome.min.css';
 import Sw from "./sw";
+import useOneSignal from './hooks/useOneSignal';
+import SubscribeButton from "./components/SubscribeButton";
 
 export const metadata = {
   title: "Create Next App",
@@ -14,19 +16,23 @@ export const metadata = {
 
 
   export default function RootLayout({ children, loading }) {
+
   return (
     <html lang="en" data-theme="fantasy" dir="rtl">
       <head>
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#FFFFFF" />
-        
+
         <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
-          {/* <script src="../public/onesignal.js" async=""></script> */}
+          <script src="../public/OneSignalSDKWorker.js" async=""></script>
           </head>
       <body className={inter.className}>
         <Sw />
+        <SubscribeButton />
+
         {loading ? <Loading /> : children}
         <div className="w-full h-20 bg-white"></div>
+
         <Header />
       </body>
     </html>
