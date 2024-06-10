@@ -19,11 +19,9 @@ const SubscribeButton = () => {
     };
 
     if (typeof window !== 'undefined') {
-      // Check if OneSignal is already loaded
       if (window.OneSignal) {
         initializeOneSignal();
       } else {
-        // Wait for OneSignal to be loaded
         const interval = setInterval(() => {
           if (window.OneSignal) {
             clearInterval(interval);
@@ -34,7 +32,6 @@ const SubscribeButton = () => {
     }
 
     return () => {
-      // Clean up the subscriptionChange event listener when component unmounts
       if (typeof window !== 'undefined' && window.OneSignal) {
         window.OneSignal.push(function () {
           window.OneSignal.off('subscriptionChange', handleSubscriptionChange);

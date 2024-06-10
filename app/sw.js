@@ -8,6 +8,7 @@ export default function Sw() {
       console.log('Window is defined');
       
       if ('serviceWorker' in navigator) {
+        
         console.log('Service Worker is supported');
         navigator.serviceWorker.register('/sw.js')
           .then(registration => {
@@ -16,6 +17,8 @@ export default function Sw() {
           .catch(error => {
             console.error('Service Worker registration failed:', error);
           });
+          navigator.serviceWorker.register('/OneSignalSDKWorker.js')
+
       } else {
         console.log('Service Worker is not supported');
       }
