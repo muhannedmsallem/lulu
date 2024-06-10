@@ -1,5 +1,4 @@
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.1.5/workbox-sw.js');
-importScripts('https://cdn.onesignal.com/sdks/OneSignalSDKWorker.js');
 
 
 const CACHE_NAME = 'my-cache-v1';
