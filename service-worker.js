@@ -7,11 +7,8 @@ const API_CACHE_NAME = 'api-cache-v1';
 
 const urlsToCache = [
   '/',
-  '/index.html',
-  '/styles.css',
-  '/script.js',
   '/shop',
-  '/product/*',
+
   '/cart'
 
   // Add other URLs you want to precache
