@@ -23,25 +23,7 @@ self.addEventListener('install', (event) => {
 
 // Cache and return requests
 self.addEventListener('fetch', (event) => {
-  const url = new URL(event.request.url);
-
-  if (url.pathname.startsWith('/product/')) {
-    event.respondWith(
-      caches.open(CACHE_NAME).then((cache) => {
-        return cache.match(event.request).then((response) => {
-          return response || fetch(event.request).then((networkResponse) => {
-            if (networkResponse && networkResponse.status === 200) {
-              cache.put(event.request, networkResponse.clone());
-            }
-            return networkResponse;
-          });
-        });
-      })
-    );
-    return;
-  }
-
-  if (event.request.url.includes('/api/')) {
+  if (event.request.url.includes('/api/') || event.request.url.includes('sanity.io')) {
     event.respondWith(
       caches.open(API_CACHE_NAME).then((cache) => {
         return fetch(event.request)
@@ -55,10 +37,11 @@ self.addEventListener('fetch', (event) => {
           })
           .catch(() => {
             return caches.match(event.request).then((response) => {
-              return response || new Response('No internet connection and no cached data available', {
-                status: 503,
-                statusText: 'Service Unavailable'
-              });
+              if (response) {
+                return response;
+              } else {
+                return caches.match('/offline.html');
+              }
             });
           });
       })
@@ -70,17 +53,19 @@ self.addEventListener('fetch', (event) => {
           if (!response || response.status !== 200 || response.type !== 'basic') {
             return response;
           }
-          return caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, response.clone());
-            return response;
+          const responseToCache = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
           });
+          return response;
         }).catch(() => {
-          return caches.match('/offline.html'); // Provide a fallback offline page if available
+          return caches.match('/offline.html');
         });
       })
     );
   }
 });
+
 
 // Activate Service Worker and remove old caches
 self.addEventListener('activate', (event) => {
