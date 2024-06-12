@@ -22,15 +22,18 @@ const CartPage = () => {
     fetchCart();
   }, []);
 
-  const getLocation = () => {
+  const getLocation = (e) => {
+    if (e) {
+      e.preventDefault(); // Prevent default form submission
+    }
+  
     navigator.geolocation.getCurrentPosition(function(position) {
       setLocation({
         lat: position.coords.latitude,
         lon: position.coords.longitude,
       });
     });
-  };
-  const removeFromCart = (index) => {
+  };  const removeFromCart = (index) => {
     const newCart = cart.filter((_, i) => i !== index);
     setCart(newCart);
     localStorage.setItem('cart', JSON.stringify(newCart));
@@ -46,12 +49,17 @@ const CartPage = () => {
   };
 
   const handleOrderSubmit = async (e) => {
-    e.preventDefault();
-
+    e.preventDefault(); // Prevent default form submission
+  
+    // Construct Google Maps URL if location is available
+    const locationUrl = location
+      ? `https://www.google.com/maps?q=${location.lat},${location.lon}`
+      : '';
+  
     const order = {
       _type: 'order',
       name,
-      address,
+      address: locationUrl || address,
       phoneNumber,
       items: cart.map((product, index) => ({
         key: product.index,
@@ -66,8 +74,9 @@ const CartPage = () => {
         totalPrice: product.price * (product.quantity || 1),
       })),
       totalOrderPrice: calculateTotalPrice(),
+      location:locationUrl, // Include location URL in the order object
     };
-
+  
     try {
       const token = 'skMuyw0al2locWT7DGTeGftHSEEIlQcWaykJV8J6qdXxVQrjouuBIEmlFGNTBOWuI0LFmIrRMN3RjEQsbFThTGkG9UqLKbm8aZncweW8nK17NSwco4hU9DNU0mxMSyrKFs2OObhyfoow1MtNlWQsoSKthTquglxVauiK8ecpCF3cgIO2pbZT';
       await client.create(order, { token });
@@ -162,6 +171,7 @@ const CartPage = () => {
                         required
                       />
                     </div>
+                    {location? <h1 className='text-2x1 text-green-700'>تم إختيار موقعك بنجاح</h1> : 
                     <div className="mb-4">
                       <label className="block text-gray-700 text-sm font-bold mb-2">العنوان</label>
                       <input
@@ -171,11 +181,16 @@ const CartPage = () => {
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         required
                       />
-                                        <div>
-      <button onClick={getLocation}>أول إرسال موقعك الحالي</button>
+                                          </div>}
 
+                                        <div className="pt-5 pb-5">
+                                        <button
+                        onClick={getLocation}
+                        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                      >
+                        أو إرسال موقعك الحالي
+                      </button>
     </div>
-                    </div>
                     <div className="mb-4">
                       <label className="block text-gray-700 text-sm font-bold mb-2">رقم الهاتف</label>
                       <input
