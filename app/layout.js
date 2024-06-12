@@ -6,8 +6,6 @@ import Loading from "./components/Loading ";
 const inter = Cairo({ subsets: ["latin"] });
 import 'line-awesome/dist/line-awesome/css/line-awesome.min.css';
 import Sw from "./sw";
-import useOneSignal from './hooks/useOneSignal';
-import SubscribeButton from "./components/SubscribeButton";
 
 export const metadata = {
   title: "Create Next App",

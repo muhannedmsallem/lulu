@@ -7,7 +7,7 @@ import category from './category'
 import plotSummary from './plotSummary'
 import plotSummaries from './plotSummaries'
 import order from './order';
-import user from './user';
+import { user, account, verificationToken } from 'next-auth-sanity/schemas';
 
 export const schemaTypes = [
   // Document types
@@ -15,8 +15,7 @@ export const schemaTypes = [
   category,
   subcategory,
   order,
-  user
-  // Other types
+  user, account, verificationToken  // Other types
 
 ]
 

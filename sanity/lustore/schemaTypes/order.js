@@ -20,5 +20,11 @@ export default {
         type: 'string',
       },
       // Add other fields as needed
+      {
+        name: 'location',
+        title: 'Location (Google Maps link)',
+        type: 'url', // or 'string' if you prefer
+        description: 'Paste a link to the location on Google Maps',
+      },
     ],
   };

@@ -10,6 +10,7 @@ const CartPage = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [location, setLocation] = useState(null);
 
   useEffect(() => {
     const fetchCart = async () => {
@@ -21,6 +22,14 @@ const CartPage = () => {
     fetchCart();
   }, []);
 
+  const getLocation = () => {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      setLocation({
+        lat: position.coords.latitude,
+        lon: position.coords.longitude,
+      });
+    });
+  };
   const removeFromCart = (index) => {
     const newCart = cart.filter((_, i) => i !== index);
     setCart(newCart);
@@ -138,6 +147,7 @@ const CartPage = () => {
 
                     ))}
                   </div>
+
                   <div className="mt-8 text-right">
                     <h2 className="text-black font-bold">الإجمالي: ${calculateTotalPrice()}</h2>
                   </div>
@@ -161,6 +171,10 @@ const CartPage = () => {
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         required
                       />
+                                        <div>
+      <button onClick={getLocation}>أول إرسال موقعك الحالي</button>
+
+    </div>
                     </div>
                     <div className="mb-4">
                       <label className="block text-gray-700 text-sm font-bold mb-2">رقم الهاتف</label>
